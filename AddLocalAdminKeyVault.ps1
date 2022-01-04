@@ -75,7 +75,8 @@ $Group = 'Administrators'
 # NOTE: Be sure to change these
 $TenantId = "<tenantid>"
 $AppClientID = "<clientid>"
-$AppClientSecret = "<cleintsecret"
+$AppClientSecret = "<clientsecret>"
+
 $keyVaultName = "devicelocaladminsecrets"
 ##* ================================
 ##* FUNCTION
@@ -248,7 +249,7 @@ function Get-KeyVaultTokenFromAzureAD {
     $result = Invoke-RestMethod -Method Post -Uri $uri -Headers $headers -Body $body
 
     if ($Null -eq $result.access_token) {
-        Write-Error "[Veritas Information Map] Failed to get a token from AD for the Key Vault because the request failed with status $($result.StatusCode) and message $($result.error.message)"
+        Write-Host ("{0}: {1}" -f $_.Exception.Response.StatusCode,$_.ErrorDetails.Message) -ForegroundColor Red
     }
     Write-Verbose ("Bearer token is [{0}]" -f $token.access_token)
     return $result.access_token
@@ -316,10 +317,13 @@ write-host "Attempting to connect to Key Vault using Managed Service Identity...
 $token = Get-KeyVaultTokenFromAzureAD -TenantId $TenantId -ClientId $AppClientID -ClientSecret $AppClientSecret
 
 Write-Host ("Setting secret in Azure Key Vault for {0}..." -f $ComputerName)
-Set-KeyVaultSecretEntry -KeyVaultName $keyVaultName -SecretName $ComputerName -SecretValue $Script:Password -AcessToken $token
+$Result = Set-KeyVaultSecretEntry -KeyVaultName $keyVaultName -SecretName $ComputerName -SecretValue $Script:Password -AcessToken $token
 
-$credentials | Export-Clixml "$env:temp\$UserName.xml" -Force
-
+#export creds securely to temp folder if failes to set key vault
+If($Result.value -ne $Script:Password){
+    Write-Host "exporting credentials..."
+    $credentials | Export-Clixml "$env:temp\$UserName.xml" -Force
+}
 # use Windows native powershell cmdlet to create account
 #if local user is found; renew the password
 $LocalAdmin = Get-LocalUser $UserName -ErrorAction SilentlyContinue
