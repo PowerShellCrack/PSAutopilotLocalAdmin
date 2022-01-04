@@ -5,3 +5,4 @@
 *.code-workspace
 !/.images/
 /.images/*
+Secrets.ps1

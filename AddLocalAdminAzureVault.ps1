@@ -73,9 +73,9 @@ $ComputerName = $env:COMPUTERNAME
 $Group = 'Administrators'
 
 # NOTE: Be sure to change these
-$TenantId = "2ec9dcf0-b109-434a-8bcd-238a3bf0c6b2"
-$AppClientID = "eb7e93fc-4720-4ca1-8a2e-3302443956a9"
-$AppClientSecret = "CkD7Q~tw1buZWH~7gq12d6ewiisy.~xwu_6tR"
+$TenantId = "<tenantid>"
+$AppClientID = "<clientid>"
+$AppClientSecret = "<cleintsecret"
 $keyVaultName = "devicelocaladminsecrets"
 ##* ================================
 ##* FUNCTION
