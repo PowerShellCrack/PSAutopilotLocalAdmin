@@ -1,0 +1,8 @@
+!/Tests/
+/Tests/*
+!/.vscode/
+/.vscode/*
+*.code-workspace
+!/.images/
+/.images/*
+*Vault.ps1
