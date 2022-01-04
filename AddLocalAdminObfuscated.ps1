@@ -30,12 +30,12 @@
 
     #STEP 2 - Encrypt password with AES key. Save the output as a variable (copy/paste)
     $UserPassword = 'P@ssw0rd12!'
-    $UserObfuscatedPassword = ConvertTo-SecureString -String $UserPassword -AsPlainText -Force | ConvertFrom-SecureString -Key $AESKey
-    Write-host ('$UserObfuscatedPassword = "' + $UserObfuscatedPassword + '"')
+    $ObfuscatedPassword = ConvertTo-SecureString -String $UserPassword -AsPlainText -Force | ConvertFrom-SecureString -Key $AESKey
+    Write-host ('$ObfuscatedPassword = "' + $ObfuscatedPassword + '"')
 
     #STEP 3 - Store as useable credentials; converts encrypted key into secure key for use (used in the script)
     $UserName = 'IntuneAdmin'
-    $SecurePassword = $UserObfuscatedPassword | ConvertTo-SecureString -Key $AESKey
+    $SecurePassword = $ObfuscatedPassword | ConvertTo-SecureString -Key $AESKey
     $credential = New-Object System.Management.Automation.PsCredential($UserName, $SecurePassword)
 
     #STEP 4 - Test password output (clear text) from creds
@@ -50,8 +50,8 @@
 $AESKey = @(182,189,38,250,141,255,178,93,227,19,72,178,42,135,166,230,214,149,150,162,72,97,188,96,250,72,214,228,122,100,56,133)
 
 $UserName = 'IntuneAdmin'
-#Encrypt password (use AESkey and steps above)
-$UserObfuscatedPassword = "76492d1116743f0423413b16050a5345MgB8AGwAZgBmAHcATQBYAGwAZgB3AG8ASQBkAFkATQBWADIAWAB4AG4AbgB6AEEAPQA9AHwAZAAyADcAYQA1AGQAMAAzADgAZAA3ADAAMAA5ADAAYgA3AGEAYgAzADgANQA1AGEAZQAwAGMAZAA0AGEAYwBiAGUANQA2AGIAOAA0ADEAOQAzADYAYgA3ADYAMABkADUAOAAzADEAYQA2ADAAMQBiADMAMgBkAGIAYgAwADEAOAA="
+#Encrypt password (FOLLOW STEPS ABOVE)
+$ObfuscatedPassword = "76492d1116743f0423413b16050a5345MgB8AGwAZgBmAHcATQBYAGwAZgB3AG8ASQBkAFkATQBWADIAWAB4AG4AbgB6AEEAPQA9AHwAZAAyADcAYQA1AGQAMAAzADgAZAA3ADAAMAA5ADAAYgA3AGEAYgAzADgANQA1AGEAZQAwAGMAZAA0AGEAYwBiAGUANQA2AGIAOAA0ADEAOQAzADYAYgA3ADYAMABkADUAOAAzADEAYQA2ADAAMQBiADMAMgBkAGIAYgAwADEAOAA="
 
 $Description = 'Intune generated local account'
 
@@ -60,8 +60,7 @@ $Group = 'Administrators'
 ##* ===============================
 ##* MAIN
 ##* ===============================
-$SecurePassword = $UserObfuscatedPassword | ConvertTo-SecureString -Key $AESKey
-#$credential = New-Object System.Management.Automation.PsCredential($UserName, $SecurePassword)
+$SecurePassword = $ObfuscatedPassword | ConvertTo-SecureString -Key $AESKey
 
 # use Windows native powershell cmdlet to create account
 #if local user is found; renew the password
@@ -90,15 +89,15 @@ Else{
 
 # Query current local group
 $query="Associators of {Win32_Group.Domain='$ComputerName',Name='$Group'} where Role=GroupComponent"
-$AdminGroup = Get-WmiObject -Query $query
+$GroupQuery = Get-WmiObject -Query $query
 
 #if user is not in the group, add it
-If($UserName -notin $AdminGroup.Name)
+If($UserName -notin $GroupQuery.Name)
 {
-    Write-Host ("Adding account [{0}] to administrators group..." -f $UserName) -NoNewline
+    Write-Host ("Adding account [{0}] to [{1}] group..." -f $UserName,$Group) -NoNewline
     Add-LocalGroupMember -Group "Administrators" -Member $UserName -ErrorAction SilentlyContinue
     Write-Host ("Done") -ForegroundColor Green
 }
 Else{
-    Write-Host ("Account [{0}] is already in the administrators group" -f $UserName) -ForegroundColor Green
+    Write-Host ("Account [{0}] is already in the [{1}] group" -f $UserName,$Group) -ForegroundColor Green
 }
