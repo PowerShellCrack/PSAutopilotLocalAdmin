@@ -5,4 +5,3 @@
 *.code-workspace
 !/.images/
 /.images/*
-*Vault.ps1

@@ -11,7 +11,7 @@
 .NOTES
     Author		: Richard "Dick" Tracy <richard.j.tracy@gmail.com>
 	Source	    : https://github.com/PowerShellCrack/PSAutopilotLocalAdmin
-    Version		: 1.0.0
+    Version		: 1.0.1
 #>
 ##* ================================
 ##* VARIABLES
