@@ -39,5 +39,5 @@ $user.UserFlags.value = $user.UserFlags.value -bor 0x10000
 $user.CommitChanges()
 
 # add user to group
-$group = [ADSI]"WinNT://$($computername)/$($groupname),group"
+$group = [ADSI]"WinNT://$($computername)/$($Group),group"
 $group.add("WinNT://$($UserName),user")
