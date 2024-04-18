@@ -18,8 +18,8 @@
     ##*=============================================
     STORE THESE STEPS ELSEWHERE, run them, then update variables in VARIABLE section
 
-    $location = 'eastus'
-    $ResourceGroup = 'dtolab-SiteB-rg'
+    $location = '<location>'
+    $ResourceGroup = '<resroucegroup>'
     $keyVaultName = 'devicelocaladminsecrets'
     $ServicePrincipalName = 'devicemanagementserviceprincipal'
 
